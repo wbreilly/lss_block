@@ -52,9 +52,10 @@ end % end i b.runs
 
 
 %% get condition files from saved .mat
-%pathtoconfiles = '~/walter/fmri/sms_scan_analyses/firstlevel_con_data/';
+cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/';
+
 for i = 1:length(b.runs)
-    b.rundir(i).cond = cellstr(spm_select('FPList', ['cond*' b.curSubj sprintf('*%s*.mat', b.runs{1})]));
+    b.rundir(i).cond = cellstr(spm_select('FPList', cond_dir, [ '^cond.*' b.curSubj sprintf('.*%s.*.mat', b.runs{1})]));
 end % end i b.runs
 
 %% Da business
@@ -66,16 +67,18 @@ clear matlabbatch
 
 for irun = 1:length(b.runs)
     for iseq = 1:5
-        keyboard
+        
+        % condition file for current sequence and run
         cond_file = b.rundir(irun).cond(iseq);
         
-        load(cond_file)
-        mkdir(['b.dataDir' '/' b.runs(irun) '/' cellstr(names{1,1}) ]);
-        trialDir = ['b.dataDir' '/' b.runs(irun) '/' cellstr(names{1,1}) ];
-        clear names onsets durations
-        keyboard
+        load(char(cond_file), 'names')
+        trialdir = fullfile(b.dataDir, b.runs(irun), names{1});
+        mkdir(char(trialdir));
+        clear names 
+        
+        %%
         %initiate
-        matlabbatch{iseq}.spm.stats.fmri_spec.dir = cellstr(trialDir);
+        matlabbatch{iseq}.spm.stats.fmri_spec.dir = cellstr(trialdir);
         matlabbatch{iseq}.spm.stats.fmri_spec.timing.units = 'scans';
         matlabbatch{iseq}.spm.stats.fmri_spec.timing.RT = 1.22;
         matlabbatch{iseq}.spm.stats.fmri_spec.timing.fmri_t = 38;
@@ -98,55 +101,12 @@ for irun = 1:length(b.runs)
         matlabbatch{iseq}.spm.stats.fmri_spec.mask = {''};
         matlabbatch{iseq}.spm.stats.fmri_spec.cvi = 'AR(1)';
 
-keyboard
+
     end % end iseq
+    
     % run
     spm('defaults','fmri');
     spm_jobman('initcfg');
     spm_jobman('run',matlabbatch);
 end % end irun
-
-
-
-% 
-% %initiate
-% matlabbatch{1}.spm.stats.fmri_spec.dir = cellstr(b.dataDir);
-% matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'scans';
-% matlabbatch{1}.spm.stats.fmri_spec.timing.RT = 1.22;
-% matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = 38;
-% matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = 1;
-% %==========================================================================
-% 
-% % loop through each run to build batch 
-% for i = 1:length(b.runs)
-%     %%
-%     matlabbatch{1}.spm.stats.fmri_spec.sess(i).scans = cellstr(b.rundir(i).smfiles);
-%     
-%     %%
-%     matlabbatch{1}.spm.stats.fmri_spec.sess(i).cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
-%     matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi = cellstr(b.rundir(i).confile);
-%     matlabbatch{1}.spm.stats.fmri_spec.sess(i).regress = struct('name', {}, 'val', {});
-%     matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi_reg = cellstr(b.rundir(i).spike);
-%     matlabbatch{1}.spm.stats.fmri_spec.sess(i).hpf = 128;
-%     %%
-% 
-% end % end i b.runs
-% 
-% 
-% %============================================================
-% matlabbatch{1}.spm.stats.fmri_spec.fact = struct('name', {}, 'levels', {});
-% matlabbatch{1}.spm.stats.fmri_spec.bases.hrf.derivs = [0 0];
-% matlabbatch{1}.spm.stats.fmri_spec.volt = 1;
-% matlabbatch{1}.spm.stats.fmri_spec.global = 'None';
-% matlabbatch{1}.spm.stats.fmri_spec.mthresh = 0.8;
-% matlabbatch{1}.spm.stats.fmri_spec.mask = {''};
-% matlabbatch{1}.spm.stats.fmri_spec.cvi = 'AR(1)';
-% 
-% %%
-% % run
-% spm('defaults','fmri');
-% spm_jobman('initcfg');
-% spm_jobman('run',matlabbatch);
-
-
 end % end function

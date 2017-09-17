@@ -15,8 +15,8 @@ function [] = batch_lss_block
 % scriptdir = path to directory housing this script (and auxiliary scripts)
 % QAdir     = Name of output QA directory
 
-dataDir     = 'Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbets_9_16_17';
-scriptdir   = 'Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/lss_block'; 
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_9_16_17';
+scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/lss_block'; 
 
 
 %-- Info for Subjects
@@ -34,7 +34,7 @@ scriptdir   = 'Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/lss_block';
 %
 %  See BIDS format
 
-subjects    = {'s001'}; %'s002' 's003' 's004' 's007' 's008'};
+subjects    = {'s002' 's003' 's004' 's007' 's008'};
 runs        = {'Rifa_1' 'Rifa_2' 'Rifa_3' 'Rifa_4' 'Rifa_5' 'Rifa_6' 'Rifa_7' 'Rifa_8' 'Rifa_9'};  
 
 %-- Auto-accept
@@ -81,7 +81,7 @@ for i = 1:length(subjects)
     
     % Check whether first level has already been run for a subject
     
-    % Initialize diary for saving outpuwt
+    % Initialize diary for saving output
     diaryname = fullfile(b.dataDir, 'batch_block_lss_diary_output.txt');
     diary(diaryname);
     
