@@ -55,7 +55,7 @@ end % end i b.runs
 cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/';
 
 for i = 1:length(b.runs)
-    b.rundir(i).cond = cellstr(spm_select('FPList', cond_dir, [ '^cond.*' b.curSubj sprintf('.*%s.*.mat', b.runs{1})]));
+    b.rundir(i).cond = cellstr(spm_select('FPList', cond_dir, [ '^cond.*' b.curSubj sprintf('.*%s.*.mat', b.runs{i})]));
 end % end i b.runs
 
 %% Da business
