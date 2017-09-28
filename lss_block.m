@@ -31,7 +31,7 @@ function [b] = lss_block(b)
 
 %% get motion regressor rp file names 
 % remember to change batch to specify rp if change back to rp from spike
-% reg
+% reg e
 % for i = 1:length(b.runs)
 %     b.rundir(i).rp     = spm_select('FPListRec', b.dataDir, ['^rp.*' b.runs{i} '.*bold\.txt']);
 %     fprintf('%02d:   %s\n', i, b.rundir(i).rp)

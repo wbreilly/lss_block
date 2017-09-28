@@ -1,6 +1,6 @@
 % estimate first level for every sequence and subject
 
-dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_9_16_17';
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_9_21_17';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/lss_block';
 
 subjects    = {'s001' 's002' 's003' 's004' 's007' 's008'};
@@ -20,7 +20,7 @@ for isub = 1:length(subjects)
     %% get condition files from saved .mat
     cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/';
     for i = 1:length(b.runs)
-        b.rundir(i).cond = cellstr(spm_select('FPList', cond_dir, [ '^cond.*' b.curSubj sprintf('.*%s.*.mat', b.runs{1})]));
+        b.rundir(i).cond = cellstr(spm_select('FPList', cond_dir, [ '^cond.*' b.curSubj sprintf('.*%s.*.mat', b.runs{i})]));
     end % end i b.runs
     %%    
     
