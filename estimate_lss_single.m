@@ -1,7 +1,7 @@
 % estimate first level for every sequence and subject
 
-dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_9_21_17';
-scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/lss_block';
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_9_29_17';
+scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singeltrial';
 
 subjects    = {'s001' 's002' 's003' 's004' 's007' 's008'};
 runs        = {'Rifa_1' 'Rifa_2' 'Rifa_3' 'Rifa_4' 'Rifa_5' 'Rifa_6' 'Rifa_7' 'Rifa_8' 'Rifa_9'};  
@@ -18,7 +18,7 @@ for isub = 1:length(subjects)
     b.dataDir   = fullfile(dataDir, b.curSubj);
     
     %% get condition files from saved .mat
-    cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/seq_block_rsa/';
+    cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/';
     for i = 1:length(b.runs)
         b.rundir(i).cond = cellstr(spm_select('FPList', cond_dir, [ '^cond.*' b.curSubj sprintf('.*%s.*.mat', b.runs{i})]));
     end % end i b.runs
@@ -27,7 +27,7 @@ for isub = 1:length(subjects)
     % loop over runs
     for irun = 1:length(b.runs)
         % loop over sequences
-        for iseq = 1:5
+        for iseq = 1:25
             % condition file for current sequence and run
             cond_file = b.rundir(irun).cond(iseq);
             load(char(cond_file), 'names')
