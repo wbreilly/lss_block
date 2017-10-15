@@ -15,7 +15,7 @@ function [] = batch_lss_block
 % scriptdir = path to directory housing this script (and auxiliary scripts)
 % QAdir     = Name of output QA directory
 
-dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_9_29_17';
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_10_8_17';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singletrial'; 
 
 
@@ -34,7 +34,7 @@ scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_sing
 %
 %  See BIDS format
 
-subjects    = {'s001' 's002' 's003' 's004' 's007' 's008'}; % 's009' 's010'};
+subjects    =  {'s009'};%{'s002' 's003' 's004' 's007' 's008' 's010' 's011' 's009'};
 runs        = {'Rifa_1' 'Rifa_2' 'Rifa_3' 'Rifa_4' 'Rifa_5' 'Rifa_6' 'Rifa_7' 'Rifa_8' 'Rifa_9'};  
 
 %-- Auto-accept

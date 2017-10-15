@@ -52,7 +52,7 @@ end % end i b.runs
 
 
 %% get condition files from saved .mat
-cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/';
+cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial';
 
 for i = 1:length(b.runs)
     for iseq = 1:5
