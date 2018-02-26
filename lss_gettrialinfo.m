@@ -12,9 +12,9 @@ clc
 
 path = '/Users/WBR/drive/grad_school/DML_WBR/Sequences_Exp3/sms_scan_drive/sms_scan_fmri_copy/';
 %where to save condition files
-savepath = '/Users/WBR/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_10_8_17/cond_files';
+savepath = fullfile(path, 'cond_files');
 
-for isub = [ 9 10 11]
+for isub = [15 16 18 19]
     for irrb = 1:3
         for iblock = 1:3
             for iseq = 1:5

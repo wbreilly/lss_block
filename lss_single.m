@@ -1,4 +1,4 @@
-function [b] = lss_block(b)
+function [b] = lss_single(b)
 
 % Block lss one subject and run at a time. Creates one spm.mat for each
 % sequence (5 consecutive trials) and across 3 repetitions (3 chunks of 5
@@ -46,7 +46,7 @@ end
 %% get smoothed nii names
 for i = 1:length(b.runs)
     % print success
-    b.rundir(i).smfiles = spm_select('ExtFPListRec', b.dataDir, ['^smooth.*'  b.runs{i} '.*bold\.nii']);
+    b.rundir(i).smfiles = spm_select('ExtFPListRec', b.dataDir, ['^smoothed_3mm.*'  b.runs{i} '.*bold\.nii']);
     fprintf('%02d:   %0.0f smoothed files found.\n', i, length(b.rundir(i).smfiles))
 end % end i b.runs
 

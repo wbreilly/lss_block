@@ -7,10 +7,10 @@
 
 clear all
 
-dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_10_13_17';
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_10_20_17';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singletrial'; 
 
-subjects    = {'s009'}; %'s002' 's003' 's004' 's007' 's008' 's010' 's011'};
+subjects    = {'s015' 's016' 's018' 's019'}; %{'s001' 's002' 's003' 's004' 's007' 's008' 's009' 's010' 's011'};
 runs        = {'Rifa_1' 'Rifa_2' 'Rifa_3' 'Rifa_4' 'Rifa_5' 'Rifa_6' 'Rifa_7' 'Rifa_8' 'Rifa_9'};  
 
 %
@@ -32,7 +32,7 @@ end
 fprintf('You beta reorganize!!\n\n')
 
 %--Loop over subjects
-for i = 1:length(subjects)
+for i = 3:length(subjects)
     
     % Define variables for individual subjects - General
     b.curSubj   = subjects{i};
@@ -98,9 +98,6 @@ for i = 1:length(subjects)
     
     b.unifynames = spm_select('ExtFPListRec', b.betaDir, '.*.nii');
     
-    
-    
-    
     icur = 1;
     
     while icur < 90
@@ -142,6 +139,29 @@ for i = 1:length(subjects)
         end % end iseq     
     end % end while iintact
     
+    %%
+%     % resample betas into ROI space
+%     b.reslice = spm_select('FPListRec', b.betaDir, '.*.nii');
+%     b.reslice = b.reslice(2:end,:);
+%      
+%      % the beta image used as reference
+%     ref_dir = sprintf('/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/masks/%s/ANTS_MTL_1', b.curSubj);
+%     ref_img =  spm_select('FPListRec', ref_dir, '^HIPP_BODY_L.*.nii$');
+% 
+%     %loop through masks
+%     for islice = 1:size(b.reslice,1)
+%         matlabbatch{islice}.spm.spatial.coreg.write.ref = cellstr(ref_img);
+%         matlabbatch{islice}.spm.spatial.coreg.write.source = cellstr(b.reslice(islice,:));
+%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.interp = 4;
+%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
+%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.mask = 0;
+%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.prefix = 'reslice_';
+%     end % end imask
+%     
+%     %run
+%     spm('defaults','fmri');
+%     spm_jobman('initcfg');
+%     spm_jobman('run',matlabbatch);
 
     
 end % i (subjects)
