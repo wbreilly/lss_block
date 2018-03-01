@@ -6,6 +6,7 @@
 % with RSA toolbox in the sms_scan paradigm
 
 clear all
+clc
 
 dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_10_20_17';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singletrial'; 
@@ -38,6 +39,7 @@ for i = 1:length(subjects)
     b.curSubj   = subjects{i};
     b.runs      = runs;
     b.dataDir   = fullfile(dataDir, b.curSubj);
+    b.condDir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/random_con_files/';
         
     % Define variables for individual subjects - QA General
     b.scriptdir   = scriptdir;
@@ -47,11 +49,10 @@ for i = 1:length(subjects)
     % Check whether first level has already been run for a subject
     
     % Initialize diary for saving output
-    diaryname = fullfile(b.dataDir, 'reorganizebetasdiary.txt');
+    diaryname = fullfile(b.dataDir, 'reorganize_random_betasdiary.txt');
     diary(diaryname);
     
     %%
-    % do the stuff
     
     % make a new directory in which to place curSubj's organized betas
     b.betaDir = fullfile(b.dataDir, 'SVDP_betas_4_rsa');
@@ -62,6 +63,27 @@ for i = 1:length(subjects)
         
         % run directory
         runDir = fullfile(b.dataDir, b.runs(irun), '/');
+        
+        % load the run appropriate random cond file
+        load(sprintf('%scond_filescondfile_%s_Rifa_%d.mat',b.condDir,b.curSubj,irun))
+        % load intact versions of all sequences
+        load(sprintf('%sseq_intact.mat',b.condDir))
+        
+        %%the tricky part
+        % for every rep, sort like idxs  like the intact
+        reorder_idx = [];
+        for irep = 1:3
+            cur_seq_idx = randrunseq{irep,3} - 1; % minus one becuase the seqintact indxs are off by 1
+            [a,bidx] = ismember(randrunseq{irep,1}(1:5), seqintact(cur_seq_idx,:));
+            % lil check
+            if sum(a) < 5
+                error('random words shown dont match cur_seq!!')
+            end
+            %
+            base_idx = 1:5;
+            reorder_idx = [reorder_idx; base_idx(bidx)];
+        end % end irep
+        
        
         % get folder names and paths to betas
         [b.rundir(irun).seqs(1).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, '.*0001.*.nii');
@@ -69,18 +91,29 @@ for i = 1:length(subjects)
         [b.rundir(irun).seqs(3).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, '.*0003.*.nii');
         
         %% added to get create mean image of each repetition (same item and sequence)
-        for ibeta = 1:25
-            % images to mean
-            tmp_image = {b.rundir(irun).seqs(1).reps(ibeta,:); b.rundir(irun).seqs(2).reps(ibeta,:); b.rundir(irun).seqs(3).reps(ibeta,:) };
+        for ipos = 1:5 % instead of 1:25, because only interested in random
+            % this sets the index needed for the char array of all the beta
+            % names from spm_select
+            rep1_idx = reorder_idx(1,ipos) + 10;
+            rep2_idx = reorder_idx(2,ipos) + 10;
+            rep3_idx = reorder_idx(3,ipos) + 10;
+            
+            % grab the 3 betas that are the same verb from each of the 3
+            % repetitions
+            tmp_image = {b.rundir(irun).seqs(1).reps(rep1_idx,:); b.rundir(irun).seqs(2).reps(rep2_idx,:); b.rundir(irun).seqs(3).reps(rep3_idx,:)};
             tmp_image = strrep(tmp_image, ' ', '');
             % folder to write mean image into
-            dest = fullfile(b.rundir(irun).name(ibeta,:), 'meanbeta.nii');
+            dest = fullfile(b.rundir(irun).name(ipos + 10,:), 'mean_random_beta.nii'); % labelled according to poisition not verb. Remember this is position one isn't the actual presentation position, rather after reordering random order into intact order
             dest = strrep(dest, ' ', '');
             spm_imcalc(tmp_image, dest, '(i1 + i2 + i3)/3');
         end
+       
         
         % get folder names and paths to betas
-        [b.rundir(irun).means, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, '^mean.*.nii');
+        % interestingly this pulls out a folder names for the other
+        % sequences
+        % causing need for tweak in next section where files are copied
+        [b.rundir(irun).means, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'mean_random_beta.nii');
         
             
         %%
@@ -88,7 +121,8 @@ for i = 1:length(subjects)
             % get file name for source
             [path,name,ext] = fileparts(b.rundir(irun).means(icopy,:));
             % get folder(sequence) name info for the source
-            [path2,name2,ext2] = fileparts(b.rundir(irun).name(icopy,:));
+            % add plus 10 because there are file names I don't want
+            [path2,name2,ext2] = fileparts(b.rundir(irun).name(icopy + 10,:));
             % renove weird spaces at end of name2
             name2 = strrep(name2, ' ', '');
             % move the file and add the folder name into the file name
@@ -100,20 +134,20 @@ for i = 1:length(subjects)
     
     icur = 1;
     
-    while icur < 90
-        for iseq = 1:6
-            for ipos = 1:5
-                for irun = 1:3
-                    [path,oldname,ext] = fileparts(b.unifynames(icur,:));
-                    newname = sprintf('intact_seq%d_pos%d_run%d.nii', iseq,ipos,irun);
-                    movefile(fullfile(path, [oldname, '.nii']), fullfile(path, newname));
-                    icur = icur + 1;
-                end % end irun
-            end % end ipos
-        end % end iseq     
-    end % end while iintact
+%     while icur < 90
+%         for iseq = 1:6
+%             for ipos = 1:5
+%                 for irun = 1:3
+%                     [path,oldname,ext] = fileparts(b.unifynames(icur,:));
+%                     newname = sprintf('intact_seq%d_pos%d_run%d.nii', iseq,ipos,irun);
+%                     movefile(fullfile(path, [oldname, '.nii']), fullfile(path, newname));
+%                     icur = icur + 1;
+%                 end % end irun
+%             end % end ipos
+%         end % end iseq     
+%     end % end while iintact
     
-    while icur > 90 && icur < 136
+    while icur < 45 %> 90 && icur < 136
         for iseq = 1:3
             for ipos = 1:5
                 for irun = 1:3
@@ -126,43 +160,18 @@ for i = 1:length(subjects)
         end % end iseq     
     end % end while iintact
     
-    while icur > 135 && icur < 226
-        for iseq = 1:6
-            for ipos = 1:5
-                for irun = 1:3
-                    [path,oldname,ext] = fileparts(b.unifynames(icur,:));
-                    newname = sprintf('scrambled_seq%d_pos%d_run%d.nii', iseq,ipos,irun);
-                    movefile(fullfile(path, [oldname, '.nii']), fullfile(path, newname));
-                    icur = icur + 1;
-                end % end irun
-            end % end ipos
-        end % end iseq     
-    end % end while iintact
-    
-    %%
-%     % resample betas into ROI space
-%     b.reslice = spm_select('FPListRec', b.betaDir, '.*.nii');
-%     b.reslice = b.reslice(2:end,:);
-%      
-%      % the beta image used as reference
-%     ref_dir = sprintf('/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/masks/%s/ANTS_MTL_1', b.curSubj);
-%     ref_img =  spm_select('FPListRec', ref_dir, '^HIPP_BODY_L.*.nii$');
-% 
-%     %loop through masks
-%     for islice = 1:size(b.reslice,1)
-%         matlabbatch{islice}.spm.spatial.coreg.write.ref = cellstr(ref_img);
-%         matlabbatch{islice}.spm.spatial.coreg.write.source = cellstr(b.reslice(islice,:));
-%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.interp = 4;
-%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
-%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.mask = 0;
-%         matlabbatch{islice}.spm.spatial.coreg.write.roptions.prefix = 'reslice_';
-%     end % end imask
-%     
-%     %run
-%     spm('defaults','fmri');
-%     spm_jobman('initcfg');
-%     spm_jobman('run',matlabbatch);
-
+%     while icur > 135 && icur < 226
+%         for iseq = 1:6
+%             for ipos = 1:5
+%                 for irun = 1:3
+%                     [path,oldname,ext] = fileparts(b.unifynames(icur,:));
+%                     newname = sprintf('scrambled_seq%d_pos%d_run%d.nii', iseq,ipos,irun);
+%                     movefile(fullfile(path, [oldname, '.nii']), fullfile(path, newname));
+%                     icur = icur + 1;
+%                 end % end irun
+%             end % end ipos
+%         end % end iseq     
+%     end % end while iintact
     
 end % i (subjects)
 

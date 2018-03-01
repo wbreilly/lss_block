@@ -15,7 +15,7 @@ path = '/Users/WBR/drive/grad_school/DML_WBR/Sequences_Exp3/sms_scan_drive/sms_s
 %where to save condition files
 savepath = fullfile('/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/random_con_files', 'cond_files');
 
-for isub = [15 16 18 19]
+for isub = [15 16 18 19] % [1 2 3 4 7 8 9 10 11];
     for irrb = 1:3
         for iblock = 1:3
                 load(sprintf('%ss%02d_rrb%d_%d.mat',path,isub,irrb,iblock));
@@ -67,7 +67,7 @@ for isub = [15 16 18 19]
                     end
 
                     % save
-                    save(sprintf('%scondfile_s%03d_Rifa_%d_%s.mat',savepath,isub,run,randrunseq{1,2}),'randrunseq');
+                    save(sprintf('%scondfile_s%03d_Rifa_%d.mat',savepath,isub,run),'randrunseq');
 
                     clearvars -EXCEPT isub irrb iblock path savepath 
             clear allrunseq
