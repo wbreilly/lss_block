@@ -15,26 +15,11 @@ function [] = batch_lss_block
 % scriptdir = path to directory housing this script (and auxiliary scripts)
 % QAdir     = Name of output QA directory
 
-dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_10_20_17';
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_4_26_18';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singletrial'; 
 
 
-%-- Info for Subjects
-% Subject-specific information.
-% subjects  = cellstring containing the subject IDs
-% runs      = cellstring containg the IDs for each BOLD time series
-%
-% Assumes that all files have unique filenames that can be identified with
-% a combination of the cell strings above. For example, bold files NEED to
-% look something like:
-%   /dataDir/sub-001/func/sub-001_encoding_run-001_bold.nii
-%   /dataDir/sub-001/func/sub-001_encoding_run-002_bold.nii
-%   /dataDir/sub-001/func/sub-001_retrieval_run-001_bold.nii
-%   /dataDir/sub-001/func/sub-001_retrieval_run-002_bold.nii
-%
-%  See BIDS format
-
-subjects    =  {'s015' 's016' 's018' 's019'};%'s001' 's002' 's003' 's004' 's007' 's008' 's009' 's010' 's011'};
+subjects    =  {'s001' 's002' 's003' 's004' 's007' 's008' 's009' 's010' 's011' 's015' 's016' 's018' 's019' 's020' 's022' 's023' 's024' 's025'};
 runs        = {'Rifa_1' 'Rifa_2' 'Rifa_3' 'Rifa_4' 'Rifa_5' 'Rifa_6' 'Rifa_7' 'Rifa_8' 'Rifa_9'};  
 
 %-- Auto-accept
@@ -67,7 +52,7 @@ end
 fprintf('Running batch lss')
 
 %--Loop over subjects
-for i = 1:length(subjects)
+for i = 2:9 %11:length(subjects)
     
     % Define variables for individual subjects - General
     b.curSubj   = subjects{i};
@@ -95,6 +80,18 @@ for i = 1:length(subjects)
     [b] = lss_single(b);
     fprintf('------------------------------------------------------------\n')
     fprintf('\n')
+    
+    % temp solution
+    b = rmfield(b,'rundir');
+    
+    % Run lss estimate
+    fprintf('--Estimating--\n')
+    [b] = estimate_lss_single(b);
+    fprintf('------------------------------------------------------------\n')
+    fprintf('\n')
+    
+    % temp solution
+    b = rmfield(b,'rundir');
     
 end % i (subjects)
 

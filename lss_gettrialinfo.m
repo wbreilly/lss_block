@@ -12,9 +12,11 @@ clc
 
 path = '/Users/WBR/drive/grad_school/DML_WBR/Sequences_Exp3/sms_scan_drive/sms_scan_fmri_copy/';
 %where to save condition files
-savepath = fullfile(path, 'cond_files');
+savepath = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/cond_files/';
 
-for isub = [15 16 18 19]
+
+
+for isub = [1 2 3 4 7 8 9 10 11 15 16 18 19 20 22 23 24 25]
     for irrb = 1:3
         for iblock = 1:3
             for iseq = 1:5
@@ -30,8 +32,9 @@ for isub = [15 16 18 19]
                 
                 % 25 TR for boxcar function for entire sequence 
                 nreg = 5;
+                % 4_16_18 changed durations to 0 to use stick functions!!
                 for idur = 1:nreg
-                    durations{idur} = 5;
+                    durations{idur} = 0;
                 end % end ireg
 
 
@@ -123,9 +126,6 @@ for isub = [15 16 18 19]
                     %clear for good measure
                     onsets_tmp = [];
 
-                    %where to save condition files
-                    savepath = '/Users/WBR/walter/fmri/sms_scan_analyses/rsa_singletrial/';
-
                     % save with run naming convention (1-9)
                     % dumb way
 
@@ -158,7 +158,7 @@ for isub = [15 16 18 19]
                     % save
                     save(sprintf('%scondfile_s%03d_Rifa_%d_%s_%d_pos%d.mat',savepath,isub,run,allrunseq{iseq,1}, allrunseq{iseq,2}, iverb),'names', 'durations', 'onsets');
 
-                    clearvars -EXCEPT isub irrb iblock iseq path savepath iverb allrunseq cur_seq_tmp otherseq_tmp durations
+                    clearvars -EXCEPT isub irrb iblock iseq path savepath iverb allrunseq cur_seq_tmp otherseq_tmp durations savepath
                 end % end iverb
             end % end iseq
             clear allrunseq

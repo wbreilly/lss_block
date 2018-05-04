@@ -1,12 +1,13 @@
-% reorganize betas
+% reorganize tmaps in the same way that betas were reorganized
 % Author: Walter Reilly
-% Created: 9_19_17
+% Created: 3_22_18
 
 % Takes output from LSS and reorganizes and renames betas to be compatible
 % with RSA toolbox in the sms_scan paradigm
 
 clear all
 clc
+
 
 dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_4_26_18';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singletrial'; 
@@ -33,7 +34,7 @@ end
 fprintf('You beta reorganize!!\n\n')
 
 %--Loop over subjects
-for i = 1:length(subjects)
+for i = 11:length(subjects)
     
     % Define variables for individual subjects - General
     b.curSubj   = subjects{i};
@@ -48,14 +49,14 @@ for i = 1:length(subjects)
     % Check whether first level has already been run for a subject
     
     % Initialize diary for saving output
-%     diaryname = fullfile(b.dataDir, 'reorganized_tmaps_iary.txt');
+%     diaryname = fullfile(b.dataDir, 'reorganized_tmaps_diary.txt');
 %     diary(diaryname);
     
     %%
     % do the stuff
     
     % make a new directory in which to place curSubj's organized betas
-    b.betaDir = fullfile(b.dataDir, 'beta_4_rsa_singletrial');
+    b.betaDir = fullfile(b.dataDir, 'tmap_4_rsa_singletrial');
     mkdir(char(b.betaDir));
     
     % loop through runs
@@ -65,13 +66,10 @@ for i = 1:length(subjects)
         runDir = fullfile(b.dataDir, b.runs(irun), '/');
        
         % get folder names and paths to betas
-        % changes '*0001.nii' to full beta name on 4/10/18. Wasn't a bug
-        % technically because by deisign only these files exist, but later
-        % con and T images are added that share *0001.nii. Best to fully specify. 
-        [b.rundir(irun).seqs(1).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'beta_0001.nii');
-        [b.rundir(irun).seqs(2).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'beta_0002.nii');
-        [b.rundir(irun).seqs(3).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'beta_0003.nii');
-        
+        [b.rundir(irun).seqs(1).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'spmT_0001.nii');
+        [b.rundir(irun).seqs(2).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'spmT_0002.nii');
+        [b.rundir(irun).seqs(3).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'spmT_0003.nii');
+       
         
         %% added to get create mean image of each repetition (same item and sequence)
         for ibeta = 1:25
@@ -79,13 +77,23 @@ for i = 1:length(subjects)
             tmp_image = {b.rundir(irun).seqs(1).reps(ibeta,:); b.rundir(irun).seqs(2).reps(ibeta,:); b.rundir(irun).seqs(3).reps(ibeta,:) };
             tmp_image = strrep(tmp_image, ' ', '');
             % folder to write mean image into
-            dest = fullfile(b.rundir(irun).name(ibeta,:), 'meanbeta.nii');
+            dest = fullfile(b.rundir(irun).name(ibeta,:), 'mean_tmap.nii');
             dest = strrep(dest, ' ', '');
-            spm_imcalc(tmp_image, dest, '(i1 + i2 + i3)/3');
+            
+            % exception for one stinkin missing tmap due to invalid contrast
+            % spmT_0002.nii was copied and renamed spmT_3.nii to allow code
+            % to run unaffected for remainder of trials, but not that only
+            % first two are used and the copied tmap is not used.
+            % I addedd a red tag to the duplicate file in finder
+            if strcmp(subjects{i},'s016') && strcmp(b.runs{irun},'Rifa_5') && strcmp(dest,'/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_10_20_17/s016/Rifa_5/intact_7_rep1_pos5/mean_tmap.nii')
+                spm_imcalc(tmp_image, dest, '(i1 + i2)/2');
+            else
+                spm_imcalc(tmp_image, dest, '(i1 + i2 + i3)/3');
+            end
         end
         
         % get folder names and paths to betas
-        [b.rundir(irun).means, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, '^mean.*.nii');
+        [b.rundir(irun).means, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'mean_tmap.nii');
         
             
         %%
@@ -144,11 +152,16 @@ for i = 1:length(subjects)
         end % end iseq     
     end % end while iintact
     
+    b.check = spm_select('ExtFPListRec', b.betaDir, '.*.nii');
+    
+    if size(b.check,1) ~= 225
+        error('Dont have 225 tmaps!!')
+    end
     
 end % i (subjects)
 
 % might want to include something that programmatically verifies this..
-fprintf('Betas copied and reorganized!!\n\n')
+fprintf('Tmaps copied and reorganized!!\n\n')
 
 
 

@@ -1,6 +1,6 @@
 % reorganize betas
 % Author: Walter Reilly
-% Created: 9_19_17
+% Created: 3_22_18
 
 % Takes output from LSS and reorganizes and renames betas to be compatible
 % with RSA toolbox in the sms_scan paradigm
@@ -49,13 +49,13 @@ for i = 1:length(subjects)
     % Check whether first level has already been run for a subject
     
     % Initialize diary for saving output
-    diaryname = fullfile(b.dataDir, 'reorganize_random_betasdiary.txt');
+    diaryname = fullfile(b.dataDir, 'reorganize_random_tmaps_diary.txt');
     diary(diaryname);
     
     %%
     
     % make a new directory in which to place curSubj's organized betas
-    b.betaDir = fullfile(b.dataDir, 'SVDP_beta_4_rsa');
+    b.betaDir = fullfile(b.dataDir, 'SVDP_tmaps_4_rsa');
     mkdir(char(b.betaDir));
     
     % loop through runs
@@ -86,9 +86,9 @@ for i = 1:length(subjects)
         
        
         % get folder names and paths to betas
-        [b.rundir(irun).seqs(1).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'beta_0001.nii');
-        [b.rundir(irun).seqs(2).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'beta_0002.nii');
-        [b.rundir(irun).seqs(3).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'beta_0003.nii');
+        [b.rundir(irun).seqs(1).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'spmT_0001.nii');
+        [b.rundir(irun).seqs(2).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'spmT_0002.nii');
+        [b.rundir(irun).seqs(3).reps, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'spmT_0003.nii');
         
         %% added to get create mean image of each repetition (same item and sequence)
         for ipos = 1:5 % instead of 1:25, because only interested in random
@@ -103,7 +103,7 @@ for i = 1:length(subjects)
             tmp_image = {b.rundir(irun).seqs(1).reps(rep1_idx,:); b.rundir(irun).seqs(2).reps(rep2_idx,:); b.rundir(irun).seqs(3).reps(rep3_idx,:)};
             tmp_image = strrep(tmp_image, ' ', '');
             % folder to write mean image into
-            dest = fullfile(b.rundir(irun).name(ipos + 10,:), 'mean_random_beta.nii'); % labelled according to poisition not verb. Remember this is position one isn't the actual presentation position, rather after reordering random order into intact order
+            dest = fullfile(b.rundir(irun).name(ipos + 10,:), 'mean_random_tmap.nii'); % labelled according to poisition not verb. Remember this is position one isn't the actual presentation position, rather after reordering random order into intact order
             dest = strrep(dest, ' ', '');
             spm_imcalc(tmp_image, dest, '(i1 + i2 + i3)/3');
         end
@@ -113,7 +113,7 @@ for i = 1:length(subjects)
         % interestingly this pulls out a folder names for the other
         % sequences
         % causing need for tweak in next section where files are copied
-        [b.rundir(irun).means, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'mean_random_beta.nii');
+        [b.rundir(irun).means, b.rundir(irun).name] = spm_select('ExtFPListRec', runDir, 'mean_random_tmap.nii');
         
             
         %%
@@ -159,6 +159,13 @@ for i = 1:length(subjects)
             end % end ipos
         end % end iseq     
     end % end while iintact
+    
+    b.check = spm_select('ExtFPListRec', b.betaDir, '.*.nii');
+    
+    if size(b.check,1) ~= 45
+        error('Dont have 45 random tmaps!!')
+    end
+    
     
 %     while icur > 135 && icur < 226
 %         for iseq = 1:6

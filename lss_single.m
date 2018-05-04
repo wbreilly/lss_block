@@ -46,13 +46,13 @@ end
 %% get smoothed nii names
 for i = 1:length(b.runs)
     % print success
-    b.rundir(i).smfiles = spm_select('ExtFPListRec', b.dataDir, ['^smoothed_3mm.*'  b.runs{i} '.*bold\.nii']);
+    b.rundir(i).smfiles = spm_select('ExtFPListRec', b.dataDir, ['^smoothed.*'  b.runs{i} '.*bold\.nii']);
     fprintf('%02d:   %0.0f smoothed files found.\n', i, length(b.rundir(i).smfiles))
 end % end i b.runs
 
 
 %% get condition files from saved .mat
-cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial';
+cond_dir = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/cond_files';
 
 for i = 1:length(b.runs)
     for iseq = 1:5
@@ -101,7 +101,7 @@ for irun = 1:length(b.runs)
 
             matlabbatch{iseq}.spm.stats.fmri_spec.fact = struct('name', {}, 'levels', {});
             matlabbatch{iseq}.spm.stats.fmri_spec.bases.hrf.derivs = [0 0];
-            matlabbatch{iseq}.spm.stats.fmri_spec.volt = 1;
+            matlabbatch{iseq}.spm.stats.fmri_spec.volt = 1; % oddly this option is the default but coded as 1, don't model interactions
             matlabbatch{iseq}.spm.stats.fmri_spec.global = 'None';
             matlabbatch{iseq}.spm.stats.fmri_spec.mthresh = 0.8;
             matlabbatch{iseq}.spm.stats.fmri_spec.mask = {''};
@@ -115,7 +115,6 @@ for irun = 1:length(b.runs)
         spm_jobman('run',matlabbatch);
        
     end % end iverb
-    
     
 end % end irun
 end % end function
