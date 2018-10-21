@@ -67,7 +67,8 @@ parfor isub = 1:length(subjects)
                 %clear SPM.mat, was only using to get number of regressors
                 % this is ambiguous to parfor 
                 % clear SPM
-                clearvars SPM
+%                 clearvars SPM
+                SPM = [];
 
                 try
                     %run
