@@ -23,16 +23,16 @@ poolobj = parpool(pc, 34);
 
     %--Loop over subjects
 parfor isub = 1:length(subjects)
-    try
-        b.scriptdir = scriptdir;
-        b.runs      = runs;
-        b.curSubj   = subjects{isub};
-        b.dataDir   = fullfile(dataDir, b.curSubj);
+%     try
+    b.scriptdir = scriptdir;
+    b.runs      = runs;
+    b.curSubj   = subjects{isub};
+    b.dataDir   = fullfile(dataDir, b.curSubj);                     
         
-        [b] = write_tmaps_funky(b);      
-    catch
-        warning('\n\n\n something goofed for isub %d \n\n\n', isub)
-    end
+    [b] = write_tmaps_funky(b);      
+%     catch
+    warning('\n\n\n something goofed for isub %d \n\n\n', isub)
+%     end
 end % end isub
 
 delete(gcp('nocreate'))

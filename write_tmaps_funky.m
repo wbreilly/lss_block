@@ -6,7 +6,7 @@ for irun = 1:length(b.runs)
     trialnames = strsplit(trialnames);
 
 
-    % loop over sequences
+    % loop over sequences and positions
     for iseq = 1:25
         % condition file for current sequence and run
 %             cond_file = b.rundir(irun).cond(iseq);
@@ -37,14 +37,14 @@ for irun = 1:length(b.runs)
         clear SPM
 %                 
 
-        try
+%         try
             %run
-            spm('defaults','fmri');
-            spm_jobman('initcfg');
-            spm_jobman('run',matlabbatch);
-        catch
-            warning('something goofed for %s on %s', b.curSubj, b.runs{irun})
-        end
+        spm('defaults','fmri');
+        spm_jobman('initcfg');
+        spm_jobman('run',matlabbatch);
+%         catch
+%             warning('something goofed for %s on %s', b.curSubj, b.runs{irun})
+%         end
         
         clear matlabbatch
 
