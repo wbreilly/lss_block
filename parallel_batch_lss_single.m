@@ -15,7 +15,7 @@
 % QAdir     = Name of output QA directory
 
 dataDir     = '/home/wbreilly/sms_scan_crick/cluster_preproc_native_8_6_18';
-scriptdir   = '/home/wbreilly/sms_scan_crick/cluster_preproc_native_8_6_18/lss_singletrial'; 
+scriptdir   = '/home/wbreilly/sms_scan_crick/cluster_preproc_native_8_6_18/lss_block'; 
 
 % add spm to path
 % this version hasn't been compiled yet
@@ -65,46 +65,49 @@ poolobj = parpool(pc, 34);
 
 %--Loop over subjects
 parfor i = 1:length(subjects)
-    
-    % Define variables for individual subjects - General
-    b.curSubj   = subjects{i};
-    b.runs      = runs;
-    b.dataDir   = fullfile(dataDir, b.curSubj);
+    try
+        % Define variables for individual subjects - General
+        b.curSubj   = subjects{i};
+        b.runs      = runs;
+        b.dataDir   = fullfile(dataDir, b.curSubj);
+
+        % Define variables for individual subjects - QA General
+        b.scriptdir   = scriptdir;
+        b.auto_accept = auto_accept;
+        b.messages    = sprintf('Messages for subject %s:\n', subjects{i});
+
+        % Check whether first level has already been run for a subject
+
+        % Initialize diary for saving output
+        diaryname = fullfile(b.dataDir, 'batch_single_lss_diary_output.txt');
+        diary(diaryname);
+
+        %======================================================================
+        % Run functions (at this point, this could all be in one
+        % script/function, but where's the fun in that?
+        %======================================================================
+
+        % Run lss script
+        fprintf('--LSSing--\n')
+        [b] = lss_single_cluster(b);
+        fprintf('------------------------------------------------------------\n')
+        fprintf('\n')
+
+        % temp solution
+        b = rmfield(b,'rundir');
+
+        % Run lss estimate
+        fprintf('--Estimating--\n')
+        [b] = estimate_lss_single_cluster(b);
+        fprintf('------------------------------------------------------------\n')
+        fprintf('\n')
+
+        % temp solution
+        b = rmfield(b,'rundir');
         
-    % Define variables for individual subjects - QA General
-    b.scriptdir   = scriptdir;
-    b.auto_accept = auto_accept;
-    b.messages    = sprintf('Messages for subject %s:\n', subjects{i});
-    
-    % Check whether first level has already been run for a subject
-    
-    % Initialize diary for saving output
-    diaryname = fullfile(b.dataDir, 'batch_single_lss_diary_output.txt');
-    diary(diaryname);
-    
-    %======================================================================
-    % Run functions (at this point, this could all be in one
-    % script/function, but where's the fun in that?
-    %======================================================================
-    
-    % Run lss script
-    fprintf('--LSSing--\n')
-    [b] = lss_single(b);
-    fprintf('------------------------------------------------------------\n')
-    fprintf('\n')
-    
-    % temp solution
-    b = rmfield(b,'rundir');
-    
-    % Run lss estimate
-    fprintf('--Estimating--\n')
-    [b] = estimate_lss_single(b);
-    fprintf('------------------------------------------------------------\n')
-    fprintf('\n')
-    
-    % temp solution
-    b = rmfield(b,'rundir');
-    
+    catch
+        warning('bad shit happened for %s', subjects{i})
+    end % end catch
 end % i (subjects)
 
 fprintf('LSS FTW!!\n')
