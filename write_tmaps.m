@@ -15,7 +15,7 @@ b.runs      = runs;
 
 
     %--Loop over subjects
-for isub = 10:length(subjects)
+for isub = 1:length(subjects)
     % initialize
     b.curSubj   = subjects{isub};
     b.dataDir   = fullfile(dataDir, b.curSubj);
