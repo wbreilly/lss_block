@@ -1,4 +1,4 @@
-function [b] = lss_single(b)
+function [b] = lss_single_cluster(b)
 
 % Block lss one subject and run at a time. Creates one spm.mat for each
 % sequence (5 consecutive trials) and across 3 repetitions (3 chunks of 5
