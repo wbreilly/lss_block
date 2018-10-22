@@ -5,7 +5,8 @@ for irun = 1:length(b.runs)
     % get all the full paths to .mat's for the subject and the run
     trialnames = ls(sprintf('%s/%s/*/SPM.mat',b.dataDir,b.runs{irun}));
     trialnames = strsplit(trialnames);
-    trialnames = trialnames(2:27);
+    size(trialnames)
+%     trialnames = trialnames(1:25);
 
     % loop over sequences and positions
     % strsplit has extra column at beginning and end on cluster. should be
