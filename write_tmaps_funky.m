@@ -44,7 +44,7 @@ for irun = 1:length(b.runs)
         spm_jobman('run',matlabbatch);
     catch ME
         disp(['ID: ' ME.identifier])
-        rethrow(ME)
+        warning('\n\nproblem with %s in %s\n\n', b.curSubj, b.runs{irun})
     end
 
     % hygiene
