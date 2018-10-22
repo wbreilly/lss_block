@@ -36,7 +36,7 @@ poolobj = parpool(pc, 34);
 fprintf('You beta reorganize!!\n\n')
 
 %--Loop over subjects
-for i = 1:length(subjects)
+parfor i = 1:length(subjects)
     try
         % Define variables for individual subjects - General
         b.curSubj   = subjects{i};
