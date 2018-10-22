@@ -38,9 +38,14 @@ for irun = 1:length(b.runs)
     end % end iseq
     
     %run it
-    spm('defaults','fmri');
-    spm_jobman('initcfg');
-    spm_jobman('run',matlabbatch);
+    try
+        spm('defaults','fmri');
+        spm_jobman('initcfg');
+        spm_jobman('run',matlabbatch);
+    catch ME
+        disp(['ID: ' ME.identifier])
+        rethrow(ME)
+    end
 
     % hygiene
     clear matlabbatch
