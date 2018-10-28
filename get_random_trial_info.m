@@ -11,11 +11,11 @@ clear all
 clc
 
 
-path = '/Users/WBR/drive/grad_school/DML_WBR/Sequences_Exp3/sms_scan_drive/sms_scan_fmri_copy/';
+path = '/Volumes/GoogleDrive/My Drive/grad_school/DML_WBR/Sequences_Exp3/sms_scan_drive/sms_scan_fmri_copy/';
 %where to save condition files
 savepath = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/random_con_files/';
 
-for isub = [1 2 3 4 7 8 9 10 11 15 16 18 19 20 22 23 24 25]
+for isub = [1 2 3 4 7 8 9 10 11 15 16 18 19 20 22 23 24 25 27 28 29 30 32 33 34 35 36 37 38 39 40 41 42 43];
     for irrb = 1:3
         for iblock = 1:3
                 load(sprintf('%ss%02d_rrb%d_%d.mat',path,isub,irrb,iblock));

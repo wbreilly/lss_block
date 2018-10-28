@@ -9,10 +9,12 @@ clear all
 clc
 
 
-dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_4_26_18';
+dataDir     = '/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/cluster_preproc_native_8_6_18_tmaps';
 scriptdir   = '/Users/wbr/walter/fmri/sms_scan_analyses/rsa_singletrial/lss_singletrial'; 
 
-subjects    = {'s001' 's002' 's003' 's004' 's007' 's008' 's009' 's010' 's011' 's015' 's016' 's018' 's019' 's020' 's022' 's023' 's024' 's025'}; 
+subjects    = {'s001' 's002' 's003' 's004' 's007' 's008' 's009' 's010' 's011' 's015' 's016' 's018' 's019'  's020'...
+               's022' 's023' 's024' 's025' 's027' 's028' 's029' 's030' 's032' 's033' 's034' 's035' 's036' 's037' ...
+               's038' 's039' 's040' 's041' 's042' 's043'}; 
 runs        = {'Rifa_1' 'Rifa_2' 'Rifa_3' 'Rifa_4' 'Rifa_5' 'Rifa_6' 'Rifa_7' 'Rifa_8' 'Rifa_9'};  
 
 %
@@ -85,7 +87,7 @@ for i = 11:length(subjects)
             % to run unaffected for remainder of trials, but not that only
             % first two are used and the copied tmap is not used.
             % I addedd a red tag to the duplicate file in finder
-            if strcmp(subjects{i},'s016') && strcmp(b.runs{irun},'Rifa_5') && strcmp(dest,'/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/getbetas_native_10_20_17/s016/Rifa_5/intact_7_rep1_pos5/mean_tmap.nii')
+            if strcmp(subjects{i},'s016') && strcmp(b.runs{irun},'Rifa_5') && strcmp(dest,'/Users/wbr/walter/fmri/sms_scan_analyses/data_for_spm/cluster_preproc_native_8_6_18_tmaps/s016/Rifa_5/intact_7_rep1_pos5/mean_tmap.nii')
                 spm_imcalc(tmp_image, dest, '(i1 + i2)/2');
             else
                 spm_imcalc(tmp_image, dest, '(i1 + i2 + i3)/3');
